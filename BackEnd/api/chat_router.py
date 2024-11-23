@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
-from models.chat import ChatPrompt, ChatResponse
-from services.chat_service import ChatService
+from ..models.chat import ChatPrompt, ChatResponse
+from ..services.chat_service import ChatService
 
 router = APIRouter()
 chat_service = ChatService()
