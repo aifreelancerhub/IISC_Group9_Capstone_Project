@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 from utils.api import APIClient
-import plotly.graph_objects as go
 import json
 
 class ChatPage:
@@ -10,14 +9,13 @@ class ChatPage:
         self.api_client = api_client
         self.temperature = temperature
         self.top_p = top_p
-        self.initialize_session_state()  # Ensure session state is initialized
+        self.initialize_session_state()
         
     def initialize_session_state(self):
         if 'chat_history' not in st.session_state:
             st.session_state.chat_history = []
 
-# Assuming api_client is defined elsewhere and passed here
-api_client = APIClient() # Replace with actual api_client initialization
+api_client = APIClient()
 chat_page = ChatPage(api_client, 0.5, 0.9)
 
 st.title("AI Financial Advisor Chat")
