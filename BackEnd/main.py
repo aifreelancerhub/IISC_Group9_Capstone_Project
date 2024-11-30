@@ -1,6 +1,6 @@
 import uvicorn
 from fastapi import FastAPI
-from .api.chat_router import router as chat_router
+from IISC_Group9_Capstone_Project.BackEnd.api.chat_router import router as chat_router
 
 app = FastAPI()
 

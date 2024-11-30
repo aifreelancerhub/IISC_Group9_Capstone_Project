@@ -7,12 +7,12 @@ credentials:
     admin:
       email: admin@example.com
       name: Admin User
-      password: $2b$12$AIM3qmKo4o6OSfQiod9VqO7/njL9KlyojLouDcwPfIrvGefOtD5Wu
+      password: $2b$12$j.uCPshcZ95VZzuhtB6QUu7/nJSNxxY0nnLgUMfvk/Dt5dmVU2ejy
     advisor:
       email: advisor@example.com
       name: Financial Advisor
-      password: $2b$12$8anfnTITQz8NNLh0ssmjgun61iCnZ4NMS1sSoqztHj4Q7sl4tS0s2
+      password: $2b$12$RfVb/iLwEwya0GCkzHw3s.gNnYbSE3Ex3qeiD.u196FR3t3VvhllO
     analyst:
       email: analyst@example.com
       name: Financial Analyst
-      password: $2b$12$486D1XnFjpQYCf/jVXAgF.cUkH.OXOOnFaM9ayFcmTgxx2zyQQSD2
+      password: $2b$12$RnMDLvp3qloz9c3axOYkVO8H/nXTBc5ZgyklqZLj5o6gvz4OuK3US

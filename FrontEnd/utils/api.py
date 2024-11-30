@@ -3,7 +3,7 @@ import streamlit as st
 
 class APIClient:
     def __init__(self):
-        self.base_url = "http://localhost:8000"
+        self.base_url = "http://localhost:8001"
     
     def chat_completion(self, prompt, temperature, top_p):
         """Generate chat completion"""
@@ -91,4 +91,16 @@ class APIClient:
             return response.json()
         except Exception as e:
             st.error(f"Error fetching sector analysis: {str(e)}")
+            return {}
+
+    def get_recommendation(self, user_profile):
+        """Get investment recommendation"""
+        try:
+            response = requests.post(
+                f"{self.base_url}/investment/recommendation",
+                json=user_profile  # Send fields directly
+            )
+            return response.json()
+        except Exception as e:
+            st.error(f"Error fetching investment recommendation: {str(e)}")
             return {}
