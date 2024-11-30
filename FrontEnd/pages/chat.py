@@ -10,6 +10,14 @@ class ChatPage:
         self.api_client = api_client
         self.temperature = temperature
         self.top_p = top_p
+       
+    default_questions = [
+        "What are the best investment options for beginners?",
+        "How can I save for retirement effectively?",
+        "What is a good monthly budget plan?",
+        "Should I invest in stocks or mutual funds?",
+        "How can I improve my credit score?"
+    ]
 
     def initialize_session_state(self):
         if 'chat_history' not in st.session_state:
@@ -52,6 +60,27 @@ class ChatPage:
         self.initialize_session_state()
 
         st.markdown("### Chat")
+
+        selected_question = st.selectbox(
+        "Choose a question to ask:", self.default_questions, index=None
+        )
+
+        if selected_question:
+            st.write(f"**You selected:** {selected_question}")
+            response = self.api_client.chat_completion(selected_question, self.temperature, self.top_p)
+            # Save to session state
+            st.session_state.chat_history.append({
+                'sno': len(st.session_state.chat_history) + 1,
+                'date': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                'prompt': selected_question,
+                'response': response['response']
+            })
+            # Display the response
+            st.markdown("### Response:")
+            st.write(response['response'])
+
+        st.write("OR")
+
         prompt = st.text_area("Enter your question:", height=100)
 
         submit = st.button("Submit")
