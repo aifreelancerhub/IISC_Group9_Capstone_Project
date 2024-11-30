@@ -8,6 +8,7 @@ langchain==0.1.0
 openai==1.3.0
 typing-extensions>=4.5.0
 PyPDF2==3.0.0
+tiktoken==0.5.2  # Added tiktoken
 
 # Frontend Dependencies
 streamlit==1.31.0
@@ -20,6 +21,7 @@ python-jose==3.3.0
 bcrypt==4.1.2
 PyYAML==6.0.1
 extra-streamlit-components==0.1.60
+fpdf2==2.5.1
 
 # RAG System Dependencies
 numpy==1.26.0
@@ -27,3 +29,7 @@ jsonschema==4.19.0
 sentence-transformers==2.2.2
 faiss-cpu==1.7.4
 transformers==4.33.0
+chromadb==0.4.22  # Added ChromaDB
+#hnswlib>=0.7.0    # Required for ChromaDB
+sqlalchemy>=2.0.0 # Required for ChromaDB persistence
+

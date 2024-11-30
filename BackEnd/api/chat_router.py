@@ -1,10 +1,10 @@
-from ..models.chat import ChatPrompt, ChatResponse
-from ..services.chat_service import ChatService
+from models.chat import ChatPrompt, ChatResponse
+from services.chat_service import ChatService
 from fastapi import APIRouter, HTTPException
-from ..models.user_profile import InvestmentRecommendationRequest
-from ..models.investment_response_model import InvestmentRecommendationResponse
-from ..services.investment_recommender_service import InvestmentRecommenderService
-from ..RagBase.rag_knowledge_base import RAGKnowledgeBase
+from models.user_profile import InvestmentRecommendationRequest
+from models.investment_response_model import InvestmentRecommendationResponse
+from services.investment_recommender_service import InvestmentRecommenderService
+from RagBase.rag_knowledge_base import RAGKnowledgeBase
 
 router = APIRouter()
 chat_service = ChatService()

@@ -1,4 +1,4 @@
-from ..models import (
+from models import (
     debt_fund_investment,
     mutual_fund_investment,
     stock_investment,

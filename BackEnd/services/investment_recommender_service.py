@@ -1,11 +1,11 @@
-from ..config.settings import settings
-from ..models.investment_product import InvestmentProduct
-from ..models.user_profile import InvestmentRecommendationRequest
+from config.settings import settings
+from models.investment_product import InvestmentProduct
+from models.user_profile import InvestmentRecommendationRequest
 from typing import List, Dict, Any
 import pandas as pd
 import json
 import logging
-from ..RagBase.rag_knowledge_base import RAGKnowledgeBase
+from RagBase.rag_knowledge_base import RAGKnowledgeBase
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate

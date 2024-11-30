@@ -1,4 +1,4 @@
-from .investment_product import InvestmentProduct
+from models.investment_product import InvestmentProduct
 from dataclasses import dataclass, asdict
 @dataclass
 class DebtFundInvestment(InvestmentProduct):

@@ -1,9 +1,9 @@
 from langchain_community.chat_models import ChatOpenAI
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
-from ..config.settings import settings
-from ..models.chat import ChatPrompt, ChatResponse
-from .pdf_service import PDFService
+from config.settings import settings
+from models.chat import ChatPrompt, ChatResponse
+from services.pdf_service import PDFService
 import logging
 
 class ChatService:
