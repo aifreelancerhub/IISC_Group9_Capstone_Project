@@ -9,50 +9,98 @@ from fpdf import FPDF
 import json
 import io
 from utils.auth import Authentication
+import requests
 
 st.set_page_config(
-    page_title="Financial Advisor Dashboard",
+    page_title="Nifty20 Advisor Dashboard",
     page_icon="💼",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="collapsed"
+
 )
 
-def create_metric_card(title, value, description):
-    with st.container():
-        st.markdown(f"""
-        <div style="padding: 1rem; border-radius: 0.5rem; border: 1px solid #e0e0e0; margin-bottom: 1rem;">
-            <h3>{title}</h3>
-            <p style="font-size: 1.2rem; font-weight: bold;">{value}</p>
-            <p style="font-size: 0.9rem; color: #666;">{description}</p>
-        </div>
-        """, unsafe_allow_html=True)
+# Custom CSS for fixed header and footer
+st.markdown("""
+    <style>
+        #MainMenu {visibility: hidden;} 
+        header {visibility: hidden;}  
+        footer {visibility: hidden;} 
+        .fixed-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #f0f2f6; /* Header background color */
+            padding: 10px 10px 10px 35px; /* top right bottom left for the header */
+            text-align: Center; /* Center align text */
+            z-index: 1000; /* Ensure it's on top of other elements */
+            font-size: 24px; /* Font size for the header */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5); /* Add a shadow for visibility */
+        }
+        .logo {
+            position: absolute; /* Positioning it in the header */
+            top: 15px; /* Adjust as necessary */
+            right: 45px; /* Adjust as necessary */
+            height: 50px; /* Set the height of the logo */
+        }
+        .report-title {
+            font-size: 28px; /* Size for Report.AI */
+            color: #31333F; /* Color for emphasis */
+        }
+        @media (min-width: 576px) {
+            .st-emotion-cache-1jicfl2 {
+                padding-left: 2rem !important; /* Override left padding */
+                padding-right: 2rem !important; /* Override right padding */
+            }
+        }
+        .st-emotion-cache-hzo1qh {
+            position: fixed;
+            left: 1.5rem;
+            top: 0rem;
+            z-index: 999990;
+            display: flex;
+            -moz-box-pack: center;
+            justify-content: center;
+            -moz-box-align: center;
+            align-items: center;
+            }
+        .st-emotion-cache-j6t2ck {
+            margin: 0.25rem 0.5rem 0.25rem 0px;
+            z-index: 999990;
+            object-fit: contain;
+            height: 4.5rem;
+            }
+        .fixed-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            font-size: 12px; /* Font size for the footer */
+            font-weight: bold; /* Bold style */
+            background-color: #f0f2f6; /* Footer background color */
+            padding: 10px; /* Padding for the footer */
+            text-align: center; /* Center align text */
+            z-index: 1000; /* Ensure it's on top of other elements */
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.5); /* Add shadow for visibility (upwards) */
+        }
+    </style>
+""", unsafe_allow_html=True)
+# Inject CSS to hide the sidebar
+st.markdown("""
+    <style>
+        .css-1d391kg {display: none;}  /* Hide sidebar completely */
+    </style>
+""", unsafe_allow_html=True)
+# Header with different text sizes
+st.markdown('''
+    <div class="fixed-header">
+        <h3 class="report-title">💼 Nifty20 Advisor – Your AI-Driven Financial Mentor</h3>
+    </div>
+''', unsafe_allow_html=True)
 
-def create_radar_plot(data):
-    categories = ['P/E Ratio', 'ROE', 'Net Profit Margin', 'Operating Margin', 'Debt/Equity']
-    values = [0.7, 0.8, 0.6, 0.75, 0.65]  # Example values, should be extracted from actual data
-    
-    fig = go.Figure()
-    fig.add_trace(go.Scatterpolar(
-        r=values,
-        theta=categories,
-        fill='toself',
-        name='Financial Metrics'
-    ))
-    fig.update_layout(
-        polar=dict(radialaxis=dict(visible=True, range=[0, 1])),
-        showlegend=False
-    )
-    return fig
-
-def create_trend_plot(data):
-    # Example trend data - should be replaced with actual data
-    df = pd.DataFrame({
-        'Period': ['Q1', 'Q2', 'Q3', 'Q4'],
-        'Revenue': [100, 120, 115, 130],
-        'Profit': [20, 25, 23, 28]
-    })
-    
-    fig = px.line(df, x='Period', y=['Revenue', 'Profit'], title='Financial Trends')
-    return fig
+logo_image_path="images/IISc_Seal_Master_logo.png"
+# Use st.logo to display the logo
+st.logo(logo_image_path, size="large", link=None, icon_image=logo_image_path)
 
 def generate_pdf_report(analysis_text, figures):
     pdf = FPDF()
@@ -73,29 +121,51 @@ def generate_pdf_report(analysis_text, figures):
     
     return pdf.output(dest='S').encode('latin1')
 
+# Function to fetch news and display it in a table
+def fetch_and_display_news():
+    # Make the API call to your FastAPI endpoint
+    response = requests.get("http://localhost:8000/api/v1/news-summary")  # Adjust URL as needed
+    if response.status_code == 200:
+        data = response.json()['data']  # Assuming 'data' contains the list of news items
+        # Convert the JSON response into a DataFrame
+        news_df = pd.DataFrame(data)
+        
+        # Display the DataFrame as a table in Streamlit
+        # st.write("### Live News Recommendation")
+        # st.write(news_df[['company', 'datetime', 'news_content', 'summary']])
+        
+        # Optionally, you can add formatting or an interactive table here
+        st.dataframe(news_df[['company', 'datetime','news_content', 'summary']])
+    else:
+        st.error("Failed to fetch news data.")
+
 def main():
     auth = Authentication()
     name, authentication_status, username = auth.authenticate()
     if authentication_status:
-        with st.sidebar:
-            st.write(f"Welcome, {name}")
+        col1,col3, col2 = st.columns([0.7,0.1,3.2])  # 1:3 ratio for sidebar-like content and main content
+
+        with col1:
+            st.subheader(f"Welcome !, :red[_{name}_]")
             auth.logout()
-            st.title("Configuration")
-            
-            # Radio buttons for mode selection
-            mode = st.radio("Select Mode", ("Recommendation", "Chat"))
-            
+            st.markdown("#### Configuration")
+
             # Initialize temperature and top_p
             temperature = 0.7
             top_p = 0.9
+            # Enable inputs for recommendation
+            temperature = st.slider("Temperature", 0.0, 1.0, 0.7, 0.1)
+            top_p = st.slider("Top P", 0.0, 1.0, 0.9, 0.1)
+
+            # Radio buttons for mode selection
+            mode = st.radio("Select Mode", ("Recommendation", "Chat Advisory"))
             
+
+
             api_client = APIClient()  # Initialize APIClient here
             
             if mode == "Recommendation":
-                # Enable inputs for recommendation
-                temperature = st.slider("Temperature", 0.0, 1.0, 0.7, 0.1)
-                top_p = st.slider("Top P", 0.0, 1.0, 0.9, 0.1)
-                st.markdown("### User Profile")
+                st.markdown("#### User Profile")
                 age = st.slider("Age", 18, 100, 60, 1)
                 risk_score = st.slider("Risk Score", 0, 100, 59, 1)
                 time_horizon = st.slider("Time Horizon (Years)", 1, 50, 10, 1)
@@ -118,108 +188,38 @@ def main():
                     st.json(recommendation)
             else:
                 # Disable inputs for chat
-                st.write("Chat mode enabled. User profile inputs are disabled.")
+                st.write("Chat Advisory mode enabled. User profile inputs are disabled.")
+        with col2:
+            selected = option_menu(
+                menu_title="Nifty20 NSE Companies",
+                options=["Financial Advisory", "Live News Recommendation"],
+                icons=["chat-dots", "newspaper"],
+                menu_icon="cast",
+                default_index=0,
+                orientation="horizontal"
+            )
 
-        selected = option_menu(
-            menu_title=None,
-            options=["Chat", "Analytics", "Reports"],
-            icons=["chat-dots", "graph-up", "file-text"],
-            menu_icon="cast",
-            default_index=0,
-            orientation="horizontal"
-        )
 
-        if selected == "Chat" and mode == "Chat":
-            chat_page = ChatPage(api_client, temperature, top_p)
-            chat_page.initialize_session_state()
-            chat_page.render()
-        elif selected == "Chat" and mode == "Recommendation":
-            st.write("Chat is disabled in Recommendation mode.")
+            if selected == "Financial Advisory" and mode == "Chat Advisory":
+                chat_page = ChatPage(api_client, temperature, top_p)
+                chat_page.initialize_session_state()
+                chat_page.render()
+            elif selected == "Financial Advisory" and mode == "Recommendation":
+                st.write("Chat is disabled in Recommendation mode.")
+            
+            elif selected == "Live News Recommendation":
+                st.title("Live News Recommendation")
+
+                # Button to fetch and display the live news
+                if st.button('Extract Live News for Top 20 Nifty Companies'):
+                    fetch_and_display_news()  # Function to fetch and display news
         
-        elif selected == "Analytics":
-            st.title("Financial Analytics")
-            
-            if 'analysis_data' not in st.session_state:
-                st.session_state.analysis_data = None
-                
-            uploaded_file = st.file_uploader("Upload financial data", type=['json'])
-            if uploaded_file:
-                analysis_data = json.load(uploaded_file)
-                st.session_state.analysis_data = analysis_data
-            
-            if st.session_state.analysis_data:
-                col1, col2 = st.columns(2)
-                
-                with col1:
-                    st.subheader("Key Metrics")
-                    create_metric_card(
-                        "P/E Ratio",
-                        "Value not provided",
-                        st.session_state.analysis_data['ratios']['price_to_earnings']
-                    )
-                    create_metric_card(
-                        "ROE",
-                        "Value not provided",
-                        st.session_state.analysis_data['ratios']['return_on_equity']
-                    )
-                
-                with col2:
-                    st.subheader("Financial Health")
-                    create_metric_card(
-                        "Debt to Equity",
-                        "Value not provided",
-                        st.session_state.analysis_data['financial_health']['debt_to_equity_ratio']
-                    )
-                    create_metric_card(
-                        "Current Ratio",
-                        "Value not provided",
-                        st.session_state.analysis_data['financial_health']['current_ratio']
-                    )
-                
-                st.subheader("Visual Analysis")
-                tab1, tab2 = st.tabs(["Radar Analysis", "Trend Analysis"])
-                
-                with tab1:
-                    radar_fig = create_radar_plot(st.session_state.analysis_data)
-                    st.plotly_chart(radar_fig, use_container_width=True)
-                
-                with tab2:
-                    trend_fig = create_trend_plot(st.session_state.analysis_data)
-                    st.plotly_chart(trend_fig, use_container_width=True)
-                
-                if st.button("Download Full Report"):
-                    figures = [radar_fig, trend_fig]
-                    pdf_bytes = generate_pdf_report(
-                        str(st.session_state.analysis_data),
-                        figures
-                    )
-                    st.download_button(
-                        label="Download PDF",
-                        data=pdf_bytes,
-                        file_name="financial_analysis_report.pdf",
-                        mime="application/pdf"
-                    )
-            
-        elif selected == "Reports":
-            st.title("Reports")
-            st.info("Reports feature coming soon...")
-            
-            st.subheader("Available Reports")
-            reports = [
-                "Market Overview",
-                "Company Performance Analysis",
-                "Sector Analysis",
-                "Risk Assessment"
-            ]
-            
-            for report in reports:
-                with st.expander(report):
-                    st.write("This report will be available in the next update.")
-                    st.button(f"Generate {report}", key=report, disabled=True)
     elif authentication_status == False:
         st.error("Invalid username or password.")
     else:
         st.warning("Please login to access the dashboard.")
+# Footer
+st.markdown('<div class="fixed-footer"> Nifty20 Advisor AI Agent, © 2024 | Built by 💡 Group9 , IISC & Talentsprint GenAI Hub 💡</div>', unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()

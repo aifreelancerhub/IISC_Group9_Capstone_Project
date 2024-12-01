@@ -3,7 +3,7 @@ import streamlit as st
 
 class APIClient:
     def __init__(self):
-        self.base_url = "http://localhost:8001"
+        self.base_url = "http://localhost:8000/api/v1"
     
     def chat_completion(self, prompt, temperature, top_p):
         """Generate chat completion"""

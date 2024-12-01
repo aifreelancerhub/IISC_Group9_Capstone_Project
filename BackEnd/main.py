@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.chat_router import router as chat_router
-# from api.news_router import router as news_router
+from api.news_router import router as news_router
+from api.transcribe_router import router as transcribe_router
 
 app = FastAPI(
     title="Financial Insights Chatbot API",
@@ -24,4 +25,5 @@ app.add_middleware(
 
 # Include Routers
 app.include_router(chat_router, prefix="/api/v1", tags=["Chat"])
-# app.include_router(news_router, prefix="/api/v1", tags=["News"])
+app.include_router(news_router, prefix="/api/v1", tags=["News"])
+app.include_router(transcribe_router, prefix="/api/v1", tags=["Transcribe"])
